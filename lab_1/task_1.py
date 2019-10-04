@@ -1,5 +1,5 @@
 def task_1():
-    return ''
+    return 'aaaaaaaa'
 
 
 assert task_1() == '''
