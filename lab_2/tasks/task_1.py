@@ -1,5 +1,7 @@
 def counting_sort(values, _max, _min=0):
     """
+    zajecia02
+
     Function returns sorted list.
 
     Sortowanie przez zliczanie to metoda polegajaca na sortowaniu wąskiego zakresu wartości
