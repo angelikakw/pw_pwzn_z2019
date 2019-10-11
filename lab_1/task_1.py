@@ -1,5 +1,11 @@
 def task_1():
-    return 'aaaaaaaa'
+    napis = "\n"
+    for i in range(1, 10):
+        napis = napis + str(i) * i + '\n'
+    print(napis)
+    return napis
+
+
 
 
 assert task_1() == '''
