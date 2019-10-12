@@ -1,4 +1,16 @@
 def stack_operation(stack_commands):
+    lista = []
+    for krotka in stack_commands:
+        if krotka[0] == 'push':
+            lista.append(krotka[1])
+        elif krotka[0] == 'pop':
+            lista.pop()
+        elif krotka[0] == 'show_max':
+            print(max(lista))
+
+    return lista
+
+
     """
     Funkcja przyjmuję listę jedno i dwu elementowych krotek - operacji na stosie.
     Pierwszy element krotki to operacja, drugi wartość (opcjonalnie). Operacje:
@@ -12,7 +24,6 @@ def stack_operation(stack_commands):
     :return: List of outputs from commands.
     :rtype: list
     """
-    pass
 
 
 if __name__ == "__main__":

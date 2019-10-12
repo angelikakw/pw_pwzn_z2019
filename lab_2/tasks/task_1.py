@@ -1,7 +1,22 @@
 def counting_sort(values, _max, _min=0):
-    """
-    zajecia02
+    lista_zer = [0 for x in range(_min, _max+1)]
+    lista_wynikowa = []
+    indeks = 0
+    for element in values:
+        lista_zer[element] += 1
 
+    for zliczenie in lista_zer:
+        if zliczenie != 0:
+            i = 0
+            while i < zliczenie:
+                lista_wynikowa.append(indeks)
+                i += 1
+        indeks += 1
+
+    return lista_wynikowa
+
+
+    """
     Function returns sorted list.
 
     Sortowanie przez zliczanie to metoda polegajaca na sortowaniu wąskiego zakresu wartości
@@ -16,11 +31,10 @@ def counting_sort(values, _max, _min=0):
     :type _min: int
     :return:
     """
-    pass
 
 
 if __name__ == '__main__':
-    assert counting_sort(
-        [99, 4, 33, 2, 2, 1, 65, 3, 97, 53],
-        100,
-    ) == [1, 2, 2, 3, 4, 33, 53, 65, 97, 99]
+     assert counting_sort(
+         [99, 4, 33, 2, 2, 1, 65, 3, 97, 53],
+         100,
+     ) == [1, 2, 2, 3, 4, 33, 53, 65, 97, 99]

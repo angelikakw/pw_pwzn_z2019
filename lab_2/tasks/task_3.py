@@ -1,4 +1,9 @@
 def unique(values):
+    lista = []
+    [lista.append(i) for i in values if i not in lista]
+
+    return lista
+
     """
     Funkcja zwraca listę unikatowych wartości.
     Utrudnienie: Funkcja zwraca unikatowe wartości w kolejności wystąpienia.
@@ -8,7 +13,6 @@ def unique(values):
     :return: Unique values in order of appear.
     :rtype: list
     """
-    pass
 
 
 if __name__ == "__main__":
