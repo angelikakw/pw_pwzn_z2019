@@ -12,7 +12,12 @@ def parse_input(input):
     :return: list of parsed list of integers
     :rtype: list
     """
-    pass
+
+    cut_whitespaces = input.strip()
+    grouping = cut_whitespaces.split('\n')
+    list_of_integers = list(map(lambda s: list(map(int, s.split(' '))), grouping))
+
+    return list_of_integers
 
 
 if __name__ == '__main__':
