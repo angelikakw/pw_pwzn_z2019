@@ -1,3 +1,12 @@
+from collections import Counter
+
+def parse_input(input):
+    cut_whitespaces = input.strip()
+    grouping = cut_whitespaces.split('\n')
+    list_of_integers = list(map(lambda s: list(map(int, s.split(' '))), grouping))
+
+    return list_of_integers
+
 def check_frequency(input):
     """
     Perform counting based on input queries and return queries result.
@@ -16,7 +25,18 @@ def check_frequency(input):
     :return: list of integers with results of operation 3
     :rtype: list
     """
-    pass
+    count = Counter()
+    number_of_counts = []
+    for operation, value in parse_input(input):
+        if operation == 1:
+            count.update([value])
+        elif operation == 2:
+            del count[value]
+        elif operation == 3:
+            number_of_counts.append(count[value])
+
+    return number_of_counts
+
 
 
 _input = """
@@ -33,4 +53,4 @@ _input = """
 
 """
 if __name__ == '__main__':
-    assert check_frequency(_input) == [0, 1]
+    assert check_frequency(_input) == [0, 0]
