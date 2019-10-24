@@ -31,7 +31,8 @@ def check_frequency(input):
         if operation == 1:
             count.update([value])
         elif operation == 2:
-            del count[value]
+            if count[value] != 0:
+                count[value] -= 1
         elif operation == 3:
             number_of_counts.append(count[value])
 
@@ -52,5 +53,7 @@ _input = """
 
 
 """
+
+'Wydaje mi się, ze jest powinno być w assercie [0, 0]'
 if __name__ == '__main__':
     assert check_frequency(_input) == [0, 0]
