@@ -29,10 +29,21 @@ class Calculator:
         :return: result of operation
         :rtype: float
         """
+
+        if operator == '+':
+            return (arg1).__add__(arg2)
+        elif operator == '-':
+            return (arg1).__sub__(arg2)
+        elif operator == '*':
+            return (arg1).__mul__(arg2)
+        elif operator == '/':
+            return (arg1).__truediv__(arg2)
+
         raise NotImplementedError
 
     def memorize(self):
         """Saves last operation result to memory."""
+
         raise NotImplementedError
 
     def clean_memory(self):
