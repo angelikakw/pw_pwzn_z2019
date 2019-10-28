@@ -10,13 +10,13 @@ użyj wartość z pamięci kalkulatora. Obsłuż przypadki skrajne.
 
 class Calculator:
     def __init__(self):
-        self.memory = None
         # Podpowiedz: użyj atrybutu do przechowywania wyniku
         # ostatniej wykonanej operacji, tak by metoda memorize przypisywała
         # wynik zapisany w tym atrybucie
         self._short_memory = None
+        self._memory = None
 
-    def run(self, operator, arg1, arg2):
+    def run(self, operator, arg1, arg2=None):
         """
         Returns result of given operation.
 
@@ -29,30 +29,37 @@ class Calculator:
         :return: result of operation
         :rtype: float
         """
+        if arg2 is None:
+            arg2 = self.memory
 
         if operator == '+':
-            return (arg1).__add__(arg2)
+            self._short_memory = arg1.__add__(arg2)
         elif operator == '-':
-            return (arg1).__sub__(arg2)
+            self._short_memory = arg1.__sub__(arg2)
         elif operator == '*':
-            return (arg1).__mul__(arg2)
+            self._short_memory = arg1.__mul__(arg2)
         elif operator == '/':
-            return (arg1).__truediv__(arg2)
+            if arg2 == 0.:
+                raise RuntimeError("Dzielenie przez zero!")
+            self._short_memory = arg1.__truediv__(arg2)
 
-        raise NotImplementedError
+        return self._short_memory
 
     def memorize(self):
         """Saves last operation result to memory."""
-
-        raise NotImplementedError
+        self._memory = self._short_memory
 
     def clean_memory(self):
         """Cleans memorized value"""
-        raise NotImplementedError
+        self._memory = None
 
     def in_memory(self):
         """Prints memorized value."""
         print(f"Zapamiętana wartość: {self.memory}")
+
+    @property
+    def memory(self):
+        return self._memory
 
 
 if __name__ == '__main__':
@@ -62,3 +69,5 @@ if __name__ == '__main__':
     calc.in_memory()
     c = calc.run('/', 9)
     assert c == 3
+    calc.clean_memory()
+    calc.in_memory()
