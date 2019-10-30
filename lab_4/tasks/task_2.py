@@ -9,17 +9,79 @@ oraz metodę fabryki korzystającą z metody statycznej tworzącej nowy wektor
 z dwóch punktów.
 Wszystkie metody sprawdzają wymiar.
 """
+import math
 
 
 class Vector:
-    dim = None  # Wymiar vectora
+
+    def __init__(self, *args):
+        self._dim = len(args)
+        self.points = args  # Wymiar vectora
+
+    @property
+    def dim(self):
+        return self._dim
+
+    def __repr__(self):
+        return str(self.points)
+
+    def __len__(self):
+        return self.dim
 
     @property
     def len(self):
-        raise NotImplemented
+        result = 0
+        for i in self.points:
+            result += i*i
+        return math.sqrt(result)
 
-    def __init__(self, *args):
-        raise NotImplemented
+    def __eq__(self, vector):
+        if self.dim != vector.dim:
+            return False
+
+        for i in range(0, self.dim):
+            if self.points[i] != vector.points[i]:
+                return False
+
+        return True
+
+    def __add__(self, vector):
+        result = []
+        if self.dim == vector.dim:
+            for i in range(0, self.dim):
+                result.append(self.points[i] + vector.points[i])
+        else:
+            raise ValueError('Niezgodny wymiar')
+
+        return Vector(*result)
+
+    def __sub__(self, vector):
+        result = []
+        if self.dim == vector.dim:
+            for i in range(0, self.dim):
+                result.append(self.points[i] - vector.points[i])
+        else:
+            raise ValueError('Niezgodny wymiar')
+
+        return Vector(*result)
+
+    def __mul__(self, vector):
+        if isinstance(vector, Vector):
+            result = []
+            if self.dim == vector.dim:
+                for i in range(0, self.dim):
+                    result.append(self.points[i] * vector.points[i])
+            else:
+                raise ValueError('Niezgodny wymiar')
+
+            return sum(result)
+        else:
+            result = []
+            for i in range(0, self.dim):
+                result.append(self.points[i] * vector)
+
+            return Vector(*result)
+
 
     @staticmethod
     def calculate_vector(beg, end):
@@ -33,7 +95,14 @@ class Vector:
         :return: Calculated vector
         :rtype: tuple
         """
-        raise NotImplemented
+        result = []
+        if len(beg) == len(end):
+            for i in range(0, len(beg)):
+                result.append(end[i] - beg[i])
+        else:
+            raise ValueError('Niezgodny wymiar')
+
+        return tuple(result)
 
     @classmethod
     def from_points(cls, beg, end):
@@ -48,12 +117,13 @@ class Vector:
         :return: New vector
         :rtype: tuple
         """
-        raise NotImplemented
+        return cls(*Vector.calculate_vector(beg, end))
 
 
 if __name__ == '__main__':
     v1 = Vector(1,2,3)
     v2 = Vector(1,2,3)
+
     assert v1 + v2 == Vector(2,4,6)
     assert v1 - v2 == Vector(0,0,0)
     assert v1 * 2 == Vector(2,4,6)
