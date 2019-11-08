@@ -14,16 +14,22 @@ class CalculatorError(Exception):
     pass
 
 
-class WrongOperation(Exception):
+class WrongOperation(CalculatorError):
     pass
 
 
-class NotNumberArgument(Exception):
+class NotNumberArgument(CalculatorError):
     pass
 
 
-class EmptyMemory(Exception):
+class EmptyMemory(CalculatorError):
     pass
+
+
+def is_num(arg):
+    if type(arg) == int or type(arg) == float:
+        return True
+    return False
 
 
 class Calculator:
@@ -52,13 +58,22 @@ class Calculator:
         :rtype: float
         """
         if operator in self.operations:
-            arg2 = arg2 or self.memory
-            if arg2:
+            if arg2 is None:
+                arg2 = self.memory
+            if not is_num(arg1) or not is_num(arg2):
+                raise NotNumberArgument()
+            try:
                 self._short_memory = self.operations[operator](arg1, arg2)
-                return self._short_memory
+            except ZeroDivisionError as e:
+                raise CalculatorError from e
+            return self._short_memory
+        else:
+            raise WrongOperation()
 
     @property
     def memory(self):
+        if self._memory is None:
+            raise EmptyMemory()
         return self._memory
 
     def memorize(self):
