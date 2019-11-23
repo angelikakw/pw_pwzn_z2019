@@ -34,10 +34,43 @@ Otrzymuje się wtedy 2 pkt.
 UWAGA 2: Wszystkie jednoski masy występują w przykładzie.
 """
 from pathlib import Path
+import pandas as pd
+
+
+def change_weight(weight):
+    si_dict = {'kg': 1, 'g': 0.001, 'Mg': 1000, 'mg': 0.000001}
+    value, si = weight.split()
+    new_weight = si_dict[si] * float(value)
+    return new_weight
 
 
 def select_animals(input_path, output_path, compressed=False):
-    pass
+    animals = pd.read_csv(input_path)
+    animals['unified_weight'] = animals['mass'].map(change_weight)
+    animals = animals.sort_values(by='unified_weight')
+    group = animals.groupby(by='genus')
+    smallest_animals = []
+    for genu, val in group:
+        smallest_animals.append(val[val['gender'] == 'male'].iloc[0])
+        smallest_animals.append(val[val['gender'] == 'female'].iloc[0])
+    smallest_animals = pd.DataFrame(smallest_animals)
+    smallest_animals = smallest_animals.sort_values(by=['genus', 'name'])
+
+    if compressed:
+        smallest_animals = smallest_animals.rename(columns={'id': 'uuid'})
+        for i, anim in enumerate(smallest_animals['gender']):
+            if anim == 'female':
+                smallest_animals['gender'].iat[i] = 'F'
+            else:
+                smallest_animals['gender'].iat[i] = 'M'
+        for i, mass in enumerate(smallest_animals['mass']):
+            value = change_weight(mass)
+            value_f = '%.3e' % float(value)
+            smallest_animals['mass'].iat[i] = value_f
+        smallest_animals.to_csv(output_path, index=False, sep='_', columns=['uuid', 'gender', 'mass'])
+    else:
+        smallest_animals.to_csv(output_path, index=False, columns=['id', 'mass',
+                                                               'genus', 'name', 'gender'])
 
 
 if __name__ == '__main__':
@@ -53,3 +86,5 @@ if __name__ == '__main__':
     with open(output_path) as generated:
         with open('s_animals_sce.txt') as expected:
             assert generated.read() == expected.read()
+
+
