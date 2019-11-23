@@ -48,17 +48,18 @@ def select_animals(input_path, output_path, compressed=False):
     animals = pd.read_csv(input_path, chunksize=1)
     smallest_genus = {}
     line = {}
-    for i, anim in enumerate(animals):
-        weight = anim.at[i, 'mass']
+    for anim in animals:
+        animal = anim.iloc[0]
+        weight = animal['mass']
         weight = change_weight(weight)
-        gend = anim.at[i, 'gender'] + ' ' + anim.at[i, 'genus']
+        gend = animal['gender'] + ' ' + animal['genus']
         if gend not in smallest_genus.keys():
             smallest_genus[gend] = weight
-            line[gend] = anim.iloc[0]
+            line[gend] = animal
         else:
             if weight < smallest_genus[gend]:
                 smallest_genus[gend] = weight
-                line[gend] = anim.iloc[0]
+                line[gend] = animal
     smallest_animals = pd.DataFrame(line.values())
     smallest_animals = smallest_animals.sort_values(by=['genus', 'name'])
 
