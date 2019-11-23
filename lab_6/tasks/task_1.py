@@ -35,7 +35,7 @@ UWAGA 2: Wszystkie jednoski masy występują w przykładzie.
 """
 from pathlib import Path
 import pandas as pd
-
+from collections import defaultdict
 
 def change_weight(weight):
     si_dict = {'kg': 1, 'g': 0.001, 'Mg': 1000, 'mg': 0.000001}
@@ -45,15 +45,21 @@ def change_weight(weight):
 
 
 def select_animals(input_path, output_path, compressed=False):
-    animals = pd.read_csv(input_path)
-    animals['unified_weight'] = animals['mass'].map(change_weight)
-    animals = animals.sort_values(by='unified_weight')
-    group = animals.groupby(by='genus')
-    smallest_animals = []
-    for genu, val in group:
-        smallest_animals.append(val[val['gender'] == 'male'].iloc[0])
-        smallest_animals.append(val[val['gender'] == 'female'].iloc[0])
-    smallest_animals = pd.DataFrame(smallest_animals)
+    animals = pd.read_csv(input_path, chunksize=1)
+    smallest_genus = {}
+    line = {}
+    for i, anim in enumerate(animals):
+        weight = anim.at[i, 'mass']
+        weight = change_weight(weight)
+        gend = anim.at[i, 'gender'] + ' ' + anim.at[i, 'genus']
+        if gend not in smallest_genus.keys():
+            smallest_genus[gend] = weight
+            line[gend] = anim.iloc[0]
+        else:
+            if weight < smallest_genus[gend]:
+                smallest_genus[gend] = weight
+                line[gend] = anim.iloc[0]
+    smallest_animals = pd.DataFrame(line.values())
     smallest_animals = smallest_animals.sort_values(by=['genus', 'name'])
 
     if compressed:
