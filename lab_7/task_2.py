@@ -23,7 +23,21 @@ def calculate_neighbours(board):
     :type board: np.ndarray
     :param periodic
     """
-    pass
+    # left
+    lu = np.pad(board[:-1, :-1].astype(np.int8), ((1, 0), (1, 0)))
+    lc = np.pad(board[:, :-1].astype(np.int8), ((0, 0), (1, 0)))
+    ld = np.pad(board[1:, :-1].astype(np.int8), ((0, 1), (1, 0)))
+
+    # center
+    down = np.pad(board[1:, :].astype(np.int8), ((0, 1), (0, 0)))
+    up = np.pad(board[:-1, :].astype(np.int8), ((1, 0), (0, 0)))
+
+    # right
+    ru = np.pad(board[:-1, 1:].astype(np.int8), ((1, 0), (0, 1)))
+    rc = np.pad(board[:, 1:].astype(np.int8), ((0, 0), (0, 1)))
+    rd = np.pad(board[1:, 1:].astype(np.int8), ((0, 1), (0, 1)))
+
+    return lu + lc + ld + up + down + ru + rc + rd
 
 
 def iterate(board):
@@ -44,7 +58,10 @@ def iterate(board):
     :return: next board state
     :rtype: np.ndarray
     """
-    pass
+    neibs = calculate_neighbours(board)
+    # return (board & ((neibs >= 2) & (neibs <= 3))) | (np.invert(board) & (neibs == 3)))
+    # optimized:
+    return board & (neibs == 2) | (neibs == 3)
 
 
 if __name__ == '__main__':
@@ -57,20 +74,20 @@ if __name__ == '__main__':
         [False,  True,  True,  True, False,  True]
     ])
     print(iterate(_board))
-    assert calculate_neighbours(_board) == np.array([
+    assert np.array_equal(calculate_neighbours(_board), np.array([
         [1, 2, 2, 1, 3, 1,],
         [2, 4, 3, 4, 6, 3,],
         [3, 5, 5, 3, 4, 3,],
         [3, 3, 4, 4, 5, 2,],
         [2, 4, 6, 3, 4, 2,],
         [1, 1, 3, 2, 3, 0,],
-    ])
-    assert iterate(_board) == np.array([
-        [False, False, False, False, False, False],
+    ]))
+    assert np.array_equal(iterate(_board), np.array([
+        [False, False, False, False, True, False],
         [ True, False,  True, False, False,  True],
         [ True, False, False,  True, False,  True],
-        [False,  True, False, False, False,  True],
+        [ True,  True, False, False, False,  True],
         [False, False, False,  True, False, False],
-        [False, False,  True,  True, False, False],
-    ])
+        [False, False,  True,  True, True, False],
+    ]))
 
