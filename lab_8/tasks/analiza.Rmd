@@ -1,0 +1,30 @@
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+from tools.fit_funcs import least_sq
+```
+
+```{python}
+# Wczytanie danych z pliku
+data = np.loadtxt('data/input01.txt', delimiter=',', skiprows=1).T
+```
+
+```{python}
+linear_reg = least_sq(data[:2])
+```
+
+```{python}
+relative_uncertainty = data[2:] / np.abs(data[1:2]) <= 0.05
+```
+
+```{python}
+plt.plot(data[0:1], data[1:2])
+```
+
+```{python}
+data[0]
+```
+
+```{python}
+
+```
