@@ -1,3 +1,5 @@
+Obecnosc
+
 ## 1. (1 pkt):
 Dodaj przycisk `.` i możliwość wprowadzania liczb zmiennoprzecinkowych.
 ## 2. (2 pkt):
