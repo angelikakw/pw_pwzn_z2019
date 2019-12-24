@@ -1,7 +1,7 @@
 import tkinter as tk
 from functools import partial
 
-from lab_9.tools.calculator import Calculator
+from lab_9.tools.calculator import Calculator, CalculatorError, EmptyMemory
 
 
 class CalculatorGUI(tk.Frame):
@@ -35,7 +35,7 @@ class CalculatorGUI(tk.Frame):
             tk.Button(
                 num_pad, text=num, width=5,
                 command=partial(self.update_var, num)
-            ).grid(row=ii // 3, column=(2-ii) % 3)
+            ).grid(row=ii // 3, column=((2-ii) % 3) + 1)
         ii += 1
         tk.Button(
             num_pad, text='C', width=5,
@@ -48,9 +48,14 @@ class CalculatorGUI(tk.Frame):
         ).grid(row=ii // 3, column=ii % 3)
         ii += 1
         tk.Button(
+            num_pad, text='.', width=5,
+            command=partial(self.update_var, '.')
+        ).grid(row=ii // 3, column=ii % 3)
+        ii += 1
+        tk.Button(
             num_pad, text='=', width=5,
             command=self.calculate_result
-        ).grid(row=ii // 3, column=ii % 3)
+        ).grid(row=(ii // 3) - 1, column=(ii % 3) + 3)
 
         # klawiatura operacji
         operation_pad = tk.Frame(bottom_pad)
@@ -60,6 +65,14 @@ class CalculatorGUI(tk.Frame):
                 operation_pad, text=operation, width=5,
                 command=partial(self.set_operator, operation),
             ).grid(row=ii, column=0)
+
+        # obsluga pamieci
+        memory = [('MC', self.calculator.clean_memory), ('MR', self.memory_read), ('M+', self.calculator.memorize)]
+        for i, (text, func) in enumerate(memory):
+            tk.Button(
+                num_pad, text=text, width=5,
+                command=func
+            ).grid(row=i, column=0)
 
         return bottom_pad
 
@@ -82,9 +95,13 @@ class CalculatorGUI(tk.Frame):
     def update_var(self, num):
         state = self.state.get()
         if state:
+            if num == '.' and num in self.variables['var_1']:
+                return None
             self.variables['var_1'] += str(num)
             self.variables['var_1'] = self.variables['var_1'].lstrip('0')
         else:
+            if num == '.' and num in self.variables['var_2']:
+                return None
             self.variables['var_2'] += str(num)
             self.variables['var_2'] = self.variables['var_2'].lstrip('0')
         self.update_screen()
@@ -97,15 +114,50 @@ class CalculatorGUI(tk.Frame):
 
     def calculate_result(self):
         if self.variables['var_1'] and self.variables['var_2']:
-            var_1 = int(self.variables['var_1'])
-            var_2 = int(self.variables['var_2'])
+            var_1 = float(self.variables['var_1'])
+            var_2 = float(self.variables['var_2'])
             self.screen['text'] = self.calculator.run(
                 self.variables['operator'], var_1, var_2
             )
             self.init_variables()
 
+    def dot(self):
+        self.update_var('.')
+
+    def memory_read(self):
+        try:
+            state = self.state.get()
+            if state:
+                self.variables['var_1'] += str(self.calculator.memory)
+                self.variables['var_1'] = self.variables['var_1'].lstrip('0')
+                self.state.set(not self.state.get())
+            else:
+                self.variables['var_2'] += str(self.calculator.memory)
+                self.variables['var_2'] = self.variables['var_2'].lstrip('0')
+            self.update_screen()
+        except CalculatorError as exc:
+            if type(exc) is EmptyMemory:
+                print('No memory!')
+
+    def key(self, event):
+        for i in range(0, 10):
+            if event.char == str(i):
+                self.update_var(i)
+
+        if event.char == '.':
+            self.dot()
+
+        if event.char == '\r':
+            self.calculate_result()
+
+        if event.char in ['+', '-', '*', '/']:
+            self.set_operator(event.char)
+
 
 if __name__ == '__main__':
     root = tk.Tk()
-    CalculatorGUI(root).pack()
+    calculator_gui = CalculatorGUI(root)
+    calculator_gui.focus_set()
+    calculator_gui.bind("<Key>", calculator_gui.key)
+    calculator_gui.pack()
     root.mainloop()
