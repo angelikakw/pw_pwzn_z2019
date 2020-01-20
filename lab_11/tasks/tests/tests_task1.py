@@ -43,6 +43,13 @@ def test_wrong_operation(calculator):
 def test_not_number_argument(calculator):
     with pytest.raises(NotNumberArgument):
         calculator.run('+', 4, 'b')
+    with pytest.raises(NotNumberArgument):
+        calculator.run('+', 'b', 4)
+
+
+def test_not_number_argument_list(calculator):
+    with pytest.raises(NotNumberArgument):
+        calculator.run('+', 4, [1, 2, 3])
 
 
 def test_calculator_error(calculator):
