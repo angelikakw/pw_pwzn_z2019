@@ -6,13 +6,11 @@ from tools.fit_funcs import least_sq
 
 ```{python}
 # Wczytanie danych z pliku
-data = np.loadtxt('data/input01.txt', delimiter=',', skiprows=1).T
+dataset = np.loadtxt('data/input01.txt', delimiter=',', skiprows=1).T
 ```
 
 ```{python}
-dataset = np.genfromtxt('data/input01.txt', delimiter=',', dtype=np.float, skip_header=True)
-a, b = least_sq(dataset[:,0:2].T)
-mip = dataset[:,0:2].T
+
 ```
 
 ```{python}
